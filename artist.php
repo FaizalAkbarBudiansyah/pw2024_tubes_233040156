@@ -38,7 +38,6 @@ else {
     <link rel="stylesheet" href="css/index.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
-</head>
 
 <body>
     <?php require "navbar.php"; ?>
@@ -53,8 +52,8 @@ else {
     <!-- body -->
     <div class="full-body warna1">
         <div class="container py-5" style="background-color: black;">
-            <form class="d-flex mt-3 mb-5" role="search" method="post" action="">
-                <input class="form-control me-2" type="text" name="keyword" placeholder="Search" autocomplete="off" id="keyword">
+            <form class="d-flex mt-3 mb-5" role="search" action="" method="get">
+                <input class="form-control me-2" type="text" name="keyword" placeholder="Search" aria-label="Search" autocomplete="off" id="keyword">
                 <button class="btn" style="background-color: red;" type="submit" name="cari" id="tombol-cari">Search</button>
             </form>
             <div class="row text-center">
@@ -106,26 +105,26 @@ else {
 
     <script src="https://kit.fontawesome.com/69feecb069.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <!-- <script src="js/script.js"></script> -->
 
     <script>
         var keyword = document.getElementById("keyword");
         var tombolCari = document.getElementById("tombol-cari");
-        var container = document.getElementById("container");
+        var artistContainer = document.getElementById("artist");
 
         keyword.addEventListener("keyup", function() {
             var xhr = new XMLHttpRequest();
 
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200) {
-                    container.innerHTML = xhr.responseText;
+                    artistContainer.innerHTML = xhr.responseText;
                 }
             };
 
-            xhr.open("GET", "ajax/index2.php?keyword=" + keyword.value, true);
+            xhr.open("GET", "ajax/ajaxartist.php?keyword=" + keyword.value, true);
             xhr.send();
         });
     </script>
+
 
 </body>
 

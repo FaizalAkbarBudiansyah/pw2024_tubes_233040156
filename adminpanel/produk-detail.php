@@ -2,13 +2,18 @@
 require "session.php";
 require "../koneksi.php";
 
-$id = $_GET['p'];
+if (isset($_GET['p'])) {
+    $id = $_GET['p'];
 
-$query = mysqli_query($conn, "SELECT a.*, b.nama AS nama_kategori FROM produk a JOIN kategori b ON a.kategori_id=b.id WHERE a.id='$id'");
-$data = mysqli_fetch_array($query);
+    $query = mysqli_query($conn, "SELECT a.*, b.nama AS nama_kategori FROM produk a JOIN kategori b ON a.kategori_id=b.id WHERE a.id='$id'");
+    $data = mysqli_fetch_array($query);
 
-$queryKategori = mysqli_query($conn, "SELECT * FROM kategori WHERE id!='$data[kategori_id]'");
-
+    $queryKategori = mysqli_query($conn, "SELECT * FROM kategori WHERE id!='$data[kategori_id]'");
+} else {
+    // Jika parameter 'p' tidak ada, Anda bisa mengarahkan ulang atau menampilkan pesan error
+    echo "ID produk tidak ditemukan.";
+    exit;
+}
 function generateRandomString($length = 10)
 {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIZKLMNOPQRSTUVWXYZ';
@@ -18,6 +23,35 @@ function generateRandomString($length = 10)
         $randomString .= $characters[rand(0, $characterslength - 1)];
     }
 }
+
+$query1 = mysqli_query($conn, "SELECT a.*, b.nama AS nama_kategori FROM produk a JOIN kategori b ON a.kategori_id=b.id");
+$jumlahArtist = mysqli_num_rows($query1);
+
+$queryKategori1 = mysqli_query($conn, "SELECT * FROM kategori");
+
+// cari artist dari nama artist/kunci
+if (isset($_GET['keyword'])) {
+    $keyword = $_GET['keyword'];
+    $queryProduk = mysqli_query($conn, "SELECT * FROM produk WHERE nama LIKE '%$_GET[keyword]%'");
+    $countData = mysqli_num_rows($queryProduk);
+}
+// cari artist dari kategori
+else if (isset($_GET['kategori'])) {
+    $queryGetKategoriId = mysqli_query($conn, "SELECT id FROM kategori WHERE nama LIKE '$_GET[kategori]'");
+    $kategoriId = mysqli_fetch_array($queryGetKategoriId);
+
+    $queryProduk = mysqli_query($conn, "SELECT * FROM produk WHERE kategori_id='$kategoriId[id]'");
+    $countData = mysqli_num_rows($queryProduk);
+}
+// cari artist default
+else {
+    $queryProduk = mysqli_query($conn, "SELECT * FROM produk");
+
+    $countData = mysqli_num_rows($queryProduk);
+}
+
+
+
 ?>
 
 <!DOCTYPE html>

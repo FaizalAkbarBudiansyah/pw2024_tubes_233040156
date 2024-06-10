@@ -17,6 +17,28 @@ function generateRandomString($length = 10)
     }
     return $randomString;
 }
+
+// cari artist dari nama artist/kunci
+if (isset($_GET['keyword'])) {
+    $keyword = $_GET['keyword'];
+    $queryProduk = mysqli_query($conn, "SELECT * FROM produk WHERE nama LIKE '%$_GET[keyword]%'");
+    $countData = mysqli_num_rows($queryProduk);
+}
+// cari artist dari kategori
+else if (isset($_GET['kategori'])) {
+    $queryGetKategoriId = mysqli_query($conn, "SELECT id FROM kategori WHERE nama LIKE '$_GET[kategori]'");
+    $kategoriId = mysqli_fetch_array($queryGetKategoriId);
+
+    $queryProduk = mysqli_query($conn, "SELECT * FROM produk WHERE kategori_id='$kategoriId[id]'");
+    $countData = mysqli_num_rows($queryProduk);
+}
+// cari artist default
+else {
+    $queryProduk = mysqli_query($conn, "SELECT * FROM produk");
+
+    $countData = mysqli_num_rows($queryProduk);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -53,7 +75,9 @@ function generateRandomString($length = 10)
                 <li class="breadcrumb-item active" aria-current="page">
                     Produk
                 </li>
-                <a href="../cetak.php" target="_blank">Cetak</a>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <a href="../cetak.php" target="_blank" style="text-decoration: none; color: black;"> <i class="fa-solid fa-print"></i> Cetak</a>
+                </li>
             </ol>
         </nav>
 
@@ -175,12 +199,11 @@ function generateRandomString($length = 10)
 
         <div class="mt-3">
             <h2>List Produk</h2>
+            <form class="d-flex mt-3 mb-5" role="search" action="produk-detail.php" method="get">
+                <input class="form-control me-2" type="text" name="keyword" placeholder="Search" aria-label="Search" autocomplete="off" id="keyword">
+                <button class="btn" style="background-color: red;" type="submit" name="cari" id="tombol-cari">Search</button>
+            </form>
             <div id="container">
-                <form class="d-flex mt-3 mb-5" role="search" method="get" action="produk-detail.php">
-                    <input class="form-control me-2" type="text" name="keyword" placeholder="Search" aria-label="Search" autocomplete="off" id="keyword">
-                    <button class="btn" style="background-color: red;" type="submit" name="cari" id="tombol-cari">Search</button>
-                </form>
-
                 <div class="table-responsive mt-5 mb-5">
                     <table class="table">
                         <thead>
@@ -226,9 +249,28 @@ function generateRandomString($length = 10)
         </div>
     </div>
 
-    <script src="../js/script1.js"></script>
     <script src="https://kit.fontawesome.com/69feecb069.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+        var keyword = document.getElementById("keyword");
+        var tombolCari = document.getElementById("tombol-cari");
+        var container = document.getElementById("container");
+
+        keyword.addEventListener("keyup", function() {
+            var xhr = new XMLHttpRequest();
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    container.innerHTML = xhr.responseText;
+                }
+            };
+
+            xhr.open("GET", "../ajax/ajaxproduk.php?keyword=" + keyword.value, true);
+            xhr.send();
+        });
+    </script>
+
 </body>
 
 </html>
