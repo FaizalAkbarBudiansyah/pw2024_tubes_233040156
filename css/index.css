@@ -1,0 +1,129 @@
+.warna1{
+    background-color: #000;
+}
+
+.warna2{
+    background-color: #404040;
+}
+
+.warna3{
+    background-color: #686868;
+}
+
+.warna4{
+    background-color: #a0a0a0;
+}
+
+.warnalain1{
+    background-color: #ff0000;
+}
+
+.banner{
+    height: 80vh;
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(../image/bg1.jpg);
+    background-size: cover;
+}
+
+.search:hover{
+    background-color: #404040;
+}
+
+.agensi{
+    height: 185px;
+    width: 285;
+}
+
+.boy-group{
+    background: url(../image/Boygroup.jpg);
+    background-size: cover;
+    background-position: center;
+}
+
+.girl-group{
+    background: url(../image/Girlgroup.jpg);
+    background-size: cover;
+    background-position: center;
+}
+
+.solo-pria{
+    background: url(../image/Solopria.jpg);
+    background-size: cover;
+    background-position: center;
+}
+
+.solo-wanita{
+    background: url(../image/Solowanita.jpg);
+    background-size: cover;
+    background-position: center;
+}
+
+.boy-band{
+    background: url(../image/Boyband.jpg);
+    background-size: cover;
+    background-position: center;
+}
+
+.girl-band{
+    background: url(../image/Girlband.jpg);
+    background-size: cover;
+    background-position: center;
+}
+
+.no-decoration{
+    text-decoration: none;
+    color: red;
+}
+
+.no-decoration:hover{
+    color: darkred;
+}
+
+
+.text{
+    color: red;
+}
+
+h3{
+    color: black ;
+}
+
+h5 {
+    color: red;
+}
+
+.title{
+    color: red;
+}
+
+.card-title{
+    background-color: black;
+    color: red;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.card-text{
+    color: red;
+}
+
+.image-box {
+    height: 200px;
+}
+
+.image-box img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.banner-artist{
+    height: 50vh;
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(../image/bg3.jpg);
+    background-size: cover;
+    background-position: 50% 30%;
+}
+
+.list-group{
+    text-decoration: none;
+}

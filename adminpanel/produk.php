@@ -2,10 +2,21 @@
 require "session.php";
 require "../koneksi.php";
 
-$query = mysqli_query($conn, "SELECT * FROM produk");
+$query = mysqli_query($conn, "SELECT a.*, b.nama AS nama_kategori FROM produk a JOIN kategori b ON a.kategori_id=b.id");
 $jumlahProduk = mysqli_num_rows($query);
 
-$queryKategori = mysqli_query($conn, "SELECT * FROM kategori")
+$queryKategori = mysqli_query($conn, "SELECT * FROM kategori");
+
+function generateRandomString($length = 10)
+{
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIZKLMNOPQRSTUVWXYZ';
+    $characterslength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $characterslength - 1)];
+    }
+    return $randomString;
+}
 ?>
 
 <!DOCTYPE html>
@@ -42,6 +53,7 @@ $queryKategori = mysqli_query($conn, "SELECT * FROM kategori")
                 <li class="breadcrumb-item active" aria-current="page">
                     Produk
                 </li>
+                <a href="../cetak.php" target="_blank">Cetak</a>
             </ol>
         </nav>
 
@@ -51,7 +63,7 @@ $queryKategori = mysqli_query($conn, "SELECT * FROM kategori")
 
             <form action="" method="post" enctype="multipart/form-data">
                 <div>
-                    <label for="nama">Nama</label>
+                    <label for="nama">Group</label>
                     <input type="text" name="nama" id="nama" class="form-control" autocomplete="off" required>
                 </div>
 
@@ -70,8 +82,8 @@ $queryKategori = mysqli_query($conn, "SELECT * FROM kategori")
                 </div>
 
                 <div>
-                    <label for="harga">Harga</label>
-                    <input type="number" class="form-control" name="harga" required>
+                    <label for="agensi">Agensi</label>
+                    <input type="text" class="form-control" name="agensi" required>
                 </div>
 
                 <div>
@@ -85,11 +97,8 @@ $queryKategori = mysqli_query($conn, "SELECT * FROM kategori")
                 </div>
 
                 <div>
-                    <label for="ketersediaan_stok">Ketersediaan Stok</label>
-                    <select name="ketersediaan_stok" id="ketersediaan_stok" class="form-control">
-                        <option value="tersedia">tersedia</option>
-                        <option value="habis">habis</option>
-                    </select>
+                    <label for="fandom">Fandom</label>
+                    <input type="text" class="form-control" name="fandom" required>
                 </div>
 
                 <div>
@@ -102,20 +111,22 @@ $queryKategori = mysqli_query($conn, "SELECT * FROM kategori")
             if (isset($_POST['simpan'])) {
                 $nama = htmlspecialchars($_POST['nama']);
                 $kategori = htmlspecialchars($_POST['kategori']);
-                $harga = htmlspecialchars($_POST['harga']);
+                $agensi = htmlspecialchars($_POST['agensi']);
                 $detail = htmlspecialchars($_POST['detail']);
-                $ketersediaan_stok = htmlspecialchars($_POST['ketersediaan_stok']);
+                $fandom = htmlspecialchars($_POST['fandom']);
 
                 $target_dir = "../image/";
                 $nama_file = basename($_FILES["foto"]["name"]);
                 $target_file = $target_dir . $nama_file;
                 $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
                 $image_size = $_FILES["foto"]["size"];
+                $random_name = generateRandomString(20);
+                $new_name = $random_name . "." . $imageFileType;
 
-                if ($nama == '' || $kategori == '' || $harga == '') {
+                if ($nama == '' || $kategori == '' || $agensi == '') {
             ?>
                     <div class="alert alert-warning mt3" role="alert">
-                        Nama, kategori dan harga wajib diisi
+                        Nama, Kategori dan Group wajib diisi
                     </div>
                     <?php
                 } else {
@@ -136,11 +147,25 @@ $queryKategori = mysqli_query($conn, "SELECT * FROM kategori")
                                     File wajib bertipe jpg, png atau gif
                                 </div>
 
-            <?php
+                        <?php
                             } else {
-                                move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file);
+                                move_uploaded_file($_FILES["foto"]["tmp_name"], $target_dir . $new_name);
                             }
                         }
+                    }
+                    // query insert to produk table
+                    $queryTambah = mysqli_query($conn, "INSERT INTO produk (kategori_id, nama, agensi, foto, detail, fandom) VALUES ('$kategori', '$nama', '$agensi', '$new_name', '$detail', '$fandom')");
+
+                    if ($queryTambah) {
+                        ?>
+                        <div class="alert alert-primary mt-3" role="alert">
+                            Produk berhasil tersimpan
+                        </div>
+
+                        <meta http-equiv="refresh" content="0; url=produk.php" />
+            <?php
+                    } else {
+                        echo mysqli_error($conn);
                     }
                 }
             }
@@ -150,47 +175,58 @@ $queryKategori = mysqli_query($conn, "SELECT * FROM kategori")
 
         <div class="mt-3">
             <h2>List Produk</h2>
+            <div id="container">
+                <form class="d-flex mt-3 mb-5" role="search" method="get" action="produk-detail.php">
+                    <input class="form-control me-2" type="text" name="keyword" placeholder="Search" aria-label="Search" autocomplete="off" id="keyword">
+                    <button class="btn" style="background-color: red;" type="submit" name="cari" id="tombol-cari">Search</button>
+                </form>
 
-            <div class="table-responsive mt-5">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Kategori</th>
-                            <th>Harga</th>
-                            <th>Ketersediaan Stok</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        if ($jumlahProduk == 0) {
-                        ?>
+                <div class="table-responsive mt-5 mb-5">
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td colspan=5 class="text-center">Data Produk tidak tersedia</td>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Kategori</th>
+                                <th>Group</th>
+                                <th>Fandom</th>
+                                <th>Action</th>
                             </tr>
+                        </thead>
+                        <tbody>
                             <?php
-                        } else {
-                            $jumlah = 1;
-                            while ($data = mysqli_fetch_array($query)) {
+                            if ($jumlahProduk == 0) {
                             ?>
                                 <tr>
-                                    <td><?php echo $jumlah; ?></td>
-                                    <td><?php echo $data['nama']; ?></td>
-                                    <td><?php echo $data['kategori_id']; ?></td>
-                                    <td><?php echo $data['harga']; ?></td>
-                                    <td><?php echo $data['ketersediaan_Stock']; ?></td>
+                                    <td colspan=6 class="text-center">Data Produk tidak tersedia</td>
                                 </tr>
-                        <?php
+                                <?php
+                            } else {
+                                $jumlah = 1;
+                                while ($data = mysqli_fetch_array($query)) {
+                                ?>
+                                    <tr>
+                                        <td><?php echo $jumlah++; ?></td>
+                                        <td><?php echo $data['nama']; ?></td>
+                                        <td><?php echo $data['nama_kategori']; ?></td>
+                                        <td><?php echo $data['agensi']; ?></td>
+                                        <td><?php echo $data['fandom']; ?></td>
+                                        <td>
+                                            <a href="produk-detail.php?p=<?php echo $data['id']; ?>" class="btn btn-info"><i class="fas fa-search"></i></a>
+                                        </td>
+                                    </tr>
+                            <?php
+                                }
                             }
-                        }
-                        ?>
-                    </tbody>
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
-
+    <script src="../js/script1.js"></script>
     <script src="https://kit.fontawesome.com/69feecb069.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

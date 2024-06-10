@@ -85,6 +85,9 @@ require "../koneksi.php";
                     <button class="btn btn-success form-control mt-3" type="submit" name="loginbtn" style="color: red;">Login</button>
                 </div>
             </form>
+            <p class="text-center" style="color: red; padding-top: 4px;">Don't have an account? <br>
+                <a href="registrasi.php" style="text-decoration: none; color: red;">Sign up</a>
+            </p>
         </div>
         <div class="mt-3" style="width: 500px;">
             <?php

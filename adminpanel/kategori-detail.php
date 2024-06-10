@@ -75,18 +75,29 @@ $data = mysqli_fetch_array($query);
             }
 
             if (isset($_POST['deleteBtn'])) {
-                $queryDelete = mysqli_query($conn, "DELETE FROM kategori WHERE id='$id'");
+                $queryCheckProducts = mysqli_query($conn, "SELECT * FROM produk WHERE kategori_id='$id'");
+                $numProducts = mysqli_num_rows($queryCheckProducts);
 
-                if ($queryDelete) {
+                if ($numProducts > 0) {
+                    // Jika ada produk terhubung, beri pesan kesalahan
                     ?>
-                    <div class="alert alert-primary mt-3" role="alert">
-                        Kategori berhasil diupdate
+                    <div class="alert alert-danger mt-3" role="alert">
+                        Tidak dapat menghapus kategori karena masih ada produk yang terhubung ke kategori ini.
                     </div>
-
-                    <meta http-equiv="refresh" content="2; url=kategori.php" />
-            <?php
+                    <?php
                 } else {
-                    echo mysqli_error($conn);
+                    // Jika tidak ada produk terhubung, lakukan penghapusan kategori
+                    $queryDelete = mysqli_query($conn, "DELETE FROM kategori WHERE id='$id'");
+                    if ($queryDelete) {
+                    ?>
+                        <div class="alert alert-primary mt-3" role="alert">
+                            Kategori berhasil dihapus
+                        </div>
+                        <meta http-equiv="refresh" content="2; url=kategori.php" />
+            <?php
+                    } else {
+                        echo mysqli_error($conn);
+                    }
                 }
             }
             ?>

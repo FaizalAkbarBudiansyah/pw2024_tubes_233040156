@@ -92,7 +92,7 @@ $jumlahKategori = mysqli_num_rows($result);
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Nama</th>
+                            <th>Kategori</th>
                             <th>Action</th>
                         </tr>
                     </thead>

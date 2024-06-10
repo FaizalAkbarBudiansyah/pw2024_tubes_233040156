@@ -3,7 +3,7 @@ require "session.php";
 require "../koneksi.php";
 
 $queryKategori = mysqli_query($conn, "SELECT * FROM kategori");
-$jumlahKategori = mysqli_num_rows($queryKategori);
+$jumlahArtist = mysqli_num_rows($queryKategori);
 
 $queryProduk = mysqli_query($conn, "SELECT * FROM produk");
 $jumlahProduk = mysqli_num_rows($queryProduk);
@@ -61,7 +61,7 @@ $jumlahProduk = mysqli_num_rows($queryProduk);
                             </div>
                             <div class="col-6 text-white">
                                 <h3 class="fs-4">Kategori</h3>
-                                <p class="fs-6"><?php echo $jumlahKategori; ?> Kategori</p>
+                                <p class="fs-6"><?php echo $jumlahArtist; ?> Kategori</p>
                                 <p><a href="kategori.php" class="text-white no-decoration">Lihat Detail</a></p>
                             </div>
                         </div>
@@ -75,13 +75,14 @@ $jumlahProduk = mysqli_num_rows($queryProduk);
                                 <i class="fa-solid fa-box fa-7x text-black-50"></i>
                             </div>
                             <div class="col-6 text-white">
-                                <h3 class="fs-4">Produk</h3>
-                                <p class="fs-6"><?php echo $jumlahProduk; ?> Produk</p>
+                                <h3 class="fs-4">Solo/Group</h3>
+                                <p class="fs-6"><?php echo $jumlahProduk; ?> Penyanyi</p>
                                 <p><a href="produk.php" class="text-white no-decoration">Lihat Detail</a></p>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
